@@ -47,14 +47,15 @@ class QtKeychainConan(ConanFile):
         valid_arch = ["x86_64", "x86", "armv6", "armv7", "armv8"]
         if str(self.settings.arch) not in valid_arch:
             raise ConanInvalidConfiguration(f"{self.name} {self.version} is only supported for the following architectures on {self.settings.os}: {valid_arch}")
-        if self.settings.os == "Linux" and not self.dependencies["qt"].options.dbus:
-            raise ConanInvalidConfiguration("qt dbus options is required")
-        if not self.dependencies["qt"].options.qtbase:
-            raise ConanInvalidConfiguration("qt qtbase option is required")
-        if not self.dependencies["qt"].options.qttools:
-            raise ConanInvalidConfiguration("qt qttools option is required")
-        if not self.dependencies["qt"].options.qttranslations:
-            raise ConanInvalidConfiguration("qt qttranslations option is required")
+        if self.dependencies["qt"].options.get_safe("config", "none") != 'host':
+            if self.settings.os == "Linux" and not self.dependencies["qt"].options.dbus:
+                raise ConanInvalidConfiguration("qt dbus options is required")
+            if not self.dependencies["qt"].options.qtbase:
+                raise ConanInvalidConfiguration("qt qtbase option is required")
+            if not self.dependencies["qt"].options.qttools:
+                raise ConanInvalidConfiguration("qt qttools option is required")
+            if not self.dependencies["qt"].options.qttranslations:
+                raise ConanInvalidConfiguration("qt qttranslations option is required")
 
     def system_requirements(self):
         if self.settings.os == "Linux":
